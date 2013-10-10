@@ -9,7 +9,9 @@ namespace Histogent
 {
     public class Program
     {
-        static readonly bool ShowSeconds = true;
+        // Edit these constants to modify the watch face
+        const bool ShowSeconds = true;  // if true print a bar for the seconds
+        const int BarsWidth = 30;   // max 40 with seconds - max 60 without seconds
 
         static Bitmap _display;
         static Timer _updateClockTimer;
@@ -66,13 +68,13 @@ namespace Histogent
                 60d     // 60 seconds max
             };
 
-            // A few variables (if thiner bars prefered, lower the width value)
-            int x, y, width = 30, height, txtX, txtY;
+            // A few variables
+            int x, y, width = BarsWidth, height, txtX, txtY;
 
             for (var i = 0; i < time.Length; i++)
             {
-                // 128px screen => 9px empty + 30px bar + 10px empty + 30px bar + 10px empty + 30px bar + 9px empty
                 // Calculate rectangle dimensions
+                // e.g. 128px screen => 9px empty + 30px bar + 10px empty + 30px bar + 10px empty + 30px bar + 9px empty
                 x = (int)(((Bitmap.MaxWidth - (((width + 10)*time.Length) - 10)) / 2.0) + (i * (width + 10)));
                 y = (int)(Bitmap.MaxHeight - ((time[i] / factors[i]) * Bitmap.MaxHeight));
                 height = Bitmap.MaxHeight - y;
