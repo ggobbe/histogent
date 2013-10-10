@@ -60,15 +60,15 @@ namespace Histogent
                 60d     // 60 seconds max
             };
 
-            // A few variables
-            int x, y, width, height, txtX, txtY;
+            // A few variables (if thiner bars prefered, lower the width value)
+            int x, y, width = 30, height, txtX, txtY;
 
             for (var i = 0; i < time.Length; i++)
             {
+                // 128px screen => 9px empty + 30px bar + 10px empty + 30px bar + 10px empty + 30px bar + 9px empty
                 // Calculate rectangle dimensions
-                x = 9 + (i * 40);
+                x = (int)(((Bitmap.MaxWidth - (((width + 10)*time.Length) - 10)) / 2.0) + (i * (width + 10)));
                 y = (int)(Bitmap.MaxHeight - ((time[i] / factors[i]) * Bitmap.MaxHeight));
-                width = 30;
                 height = Bitmap.MaxHeight - y;
 
                 // Draw rectangle
