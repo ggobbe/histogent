@@ -9,6 +9,8 @@ namespace Histogent
 {
     public class Program
     {
+        static readonly bool ShowSeconds = true;
+
         static Bitmap _display;
         static Timer _updateClockTimer;
         static readonly Font FontSmall = Resources.GetFont(Resources.FontResources.small);
@@ -23,12 +25,16 @@ namespace Histogent
             _display.DrawText("Loading...", FontSmall, Color.White, 40, 60);
             _display.Flush();
 
+            // Print the watch directly if seconds are hidden
+            if (!ShowSeconds)
+                UpdateTime(null);
+
             // obtain the current time
             var currentTime = DateTime.Now;
 
             // set up timer to refresh time every second
-            var dueTime = new TimeSpan(0, 0, 0, 4, 1000 - currentTime.Millisecond); // start timer at beginning of next 5th second
-            var period = new TimeSpan(0, 0, 0, 1, 0); // update time every second
+            var dueTime = new TimeSpan(0, 0, 0, (ShowSeconds ? 4 : 59 - currentTime.Second), 1000 - currentTime.Millisecond); // start timer at beginning of next 5th second
+            var period = new TimeSpan(0, 0, (ShowSeconds ? 0 : 1), (ShowSeconds ? 1 : 0), 0); // update time every minute/second
             _updateClockTimer = new Timer(UpdateTime, null, dueTime, period); // start our update timer
 
             // go to sleep; time updates will happen automatically every second
@@ -44,12 +50,12 @@ namespace Histogent
             _display.Clear();
 
             // Time variables (to be processed by the for loop)
-            var time = new int[]
-            {
-                (currentTime.Hour > 12 ? currentTime.Hour - 12 : currentTime.Hour),
-                currentTime.Minute,
-                currentTime.Second
-            };
+            var time = new int[(ShowSeconds ? 3 : 2)];
+            time[0] = (currentTime.Hour > 12 ? currentTime.Hour - 12 : currentTime.Hour);
+            time[1] = currentTime.Minute;
+
+            if (ShowSeconds)
+                time[2] = currentTime.Second;
 
             // Time factors (to be processed by the for loop). 
             // NB : double to avoid Euclidean division
